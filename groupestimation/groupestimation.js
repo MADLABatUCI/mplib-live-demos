@@ -203,11 +203,13 @@ let estimationImages = {
 //  Game Graphics Handles
 
 //      Instructions
+let consentScreen = document.getElementById('consentScreen');
+let consentTerms = document.getElementById('terms');
+let consentSubmit = document.getElementById('submit-consent');
 let instructionsScreen = document.getElementById('instructionsScreen');
 let instructionsText = document.getElementById('instructionText');
 let joinButton = document.getElementById('joinBtn');
-let consentTerms = document.getElementById('terms');
-let consentButton = document.getElementById('submit-consent');
+
 
 //      Waiting Room
 let waitingRoomScreen = document.getElementById('waitingRoomScreen');
@@ -265,11 +267,16 @@ consentTerms.addEventListener('click', function () {
         - starting a waiting room
     */
     if (this.checked) {
-        consentButton.disabled = false;
+        consentSubmit.disabled = false;
     }
     else {
-        consentButton.disabled = true;
+        consentSubmit.disabled = true;
     };
+});
+
+consentSubmit.addEventListener('click', function () {
+    consentScreen.style.display = "none";
+    instructionsScreen.style.display = "block";
 });
 
 //      Join Button

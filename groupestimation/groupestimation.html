@@ -40,12 +40,12 @@
         .active {
             background-color: #0064a4 !important;
         }
-        .trialbox {
+        /*.trialbox {
             border: 5px solid #0064a4; border-radius: 20px;
             width:100%; background: #EEEEEE;
             padding-top: 20px; padding-bottom: 20px; padding-left: 50px; padding-right: 50px;
             margin: 0 auto; margin-bottom: 20px;
-          }
+          }*/
         .right-button {
             display: flex; justify-content: center /*flex-end*/;
             margin-top: 10px;
@@ -292,7 +292,7 @@
     <!--
         Consent Form
     -->
-    <div class="col-12 trialbox" style="display:none;">
+    <div class="col-12 trialbox" id="consentScreen"> <!-- style="display:none;"> -->
         <div class="row">
             <div class="col-md-3"></div>
             <div class="col-md-6">
@@ -465,7 +465,7 @@
         </div>
     </div>
     
-    <div class="container" id="instructionsScreen"><!-- style="display: none;">-->
+    <div class="container" id="instructionsScreen" style="display: none;">
         <h1>Instructions</h1>
         <div class="containertext" id="instructionText">
             
@@ -721,6 +721,22 @@
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script>
+
+        function submitConsent() {
+            /*
+                Consent has been submitted and we can move onto the next page.
+
+                Hide all consent page content and activate (show) instruction
+                page content.
+            */
+
+            window.location.replace("/groupestimation/groupestimation.html");
+        };
+        $('#submit-consent').click(submitConsent);
+    </script>
+
 </body>
 
 </html>
