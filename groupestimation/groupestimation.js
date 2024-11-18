@@ -58,7 +58,7 @@ import {
     anyPlayerTerminatedAbnormally,
     getSessionError,
     getWaitRoomInfo
-} from "/src/mplib.js";
+} from "/mplib-live-demos/src/mplib.js";
 
 
 /*
@@ -152,7 +152,7 @@ let playerNEstimate = -1; // save a players no guess as -1, once a player has su
 let selectedImageArray;
 let trialNumber = 1;
 let NumberOfImages = 5;
-let imgPath = '/groupestimation/images/';
+let imgPath = '/mplib-live-demos/groupestimation/images/';
 let estimationTimeStart;
 let estimationTimeEnd;
 
@@ -239,7 +239,7 @@ instructionsText.innerHTML = `
         This is a group estimation game with ${ NumPlayers } players. You are tasked with estimating the number of items inside of a jar. An example problem is shown below.
     </p>
     <div style="text-align: center">
-        <img style="width: 50%" src="/groupestimation/instructions/instruction-img.png" />
+        <img style="width: 50%; border: 3px solid; border-radius: 15px;" src="/mplib-live-demos/groupestimation/instructions/instruction-img.png" />
     </div>
     <p>
         You are the avatar in black. You can make your estimate in the blank box. Once your estimate is final, click on the "Submit" button. As soon as a another player makes an estimate, it will be visible to you. In this example, Player 2 has made an estimate of 260.

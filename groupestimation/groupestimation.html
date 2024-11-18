@@ -6,7 +6,7 @@
     <title>Group Estimation</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/general.css">
+    <link rel="stylesheet" href="/mplib-live-demos/css/general.css">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -40,12 +40,12 @@
         .active {
             background-color: #0064a4 !important;
         }
-        /*.trialbox {
+        .trialbox {
             border: 5px solid #0064a4; border-radius: 20px;
             width:100%; background: #EEEEEE;
             padding-top: 20px; padding-bottom: 20px; padding-left: 50px; padding-right: 50px;
             margin: 0 auto; margin-bottom: 20px;
-          }*/
+          }
         .right-button {
             display: flex; justify-content: center /*flex-end*/;
             margin-top: 10px;
@@ -59,7 +59,7 @@
         }
     </style>
 
-    <link rel="stylesheet" href="/css/consent.css">
+    <link rel="stylesheet" href="/mplib-live-demos/css/consent.css">
 
     <style>
         /* Game-specific styles */
@@ -292,7 +292,7 @@
     <!--
         Consent Form
     -->
-    <div class="col-12 trialbox" id="consentScreen"> <!-- style="display:none;"> -->
+    <div class="" id="consentScreen"> <!-- style="display:none;"> -->
         <div class="row">
             <div class="col-md-3"></div>
             <div class="col-md-6">
@@ -310,11 +310,11 @@
                                         This study is conducted on behalf of <i>MADLAB</i> at the <i>University of California - Irvine</i>.
                                     </p>-->
                                     <p id="header-message">
-                                        <b>Please, read the information below <b>carefully</b> before you decide to participate in this study.</b>
+                                        <u>Please, read the information below <b>carefully</b> before you decide to participate in this study.</u>
                                     </p>
                                 </td>
                                 <td>
-                                    <img id="university-seal" src="/images/uci_seal.png" alt="Dummy University logo"
+                                    <img id="university-seal" src="/mplib-live-demos/images/uci_seal.png" alt="Dummy University logo"
                                         height="125" width="125"/>
                                 </td>
                             </tr>
@@ -715,28 +715,12 @@
     </div>
     
     
-    <script src="/src/mpconfig.js"></script>
-    <script type="module" src="/src/mplib.js" async></script>
-    <script type="module" src="/groupestimation/groupestimation.js"></script>
+    <script src="/mplib-live-demos/src/mpconfig.js"></script>
+    <script type="module" src="/mplib-live-demos/src/mplib.js" async></script>
+    <script type="module" src="/mplib-live-demos/groupestimation/groupestimation.js"></script>
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
-    <script>
-
-        function submitConsent() {
-            /*
-                Consent has been submitted and we can move onto the next page.
-
-                Hide all consent page content and activate (show) instruction
-                page content.
-            */
-
-            window.location.replace("/groupestimation/groupestimation.html");
-        };
-        $('#submit-consent').click(submitConsent);
-    </script>
-
 </body>
 
 </html>
