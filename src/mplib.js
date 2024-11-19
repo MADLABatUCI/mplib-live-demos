@@ -43,53 +43,6 @@ const firebaseApp = initializeApp(firebasempConfig);
 const auth = getAuth(firebaseApp);
 const db = getDatabase(firebaseApp);
 
-/**********************************************************
-*   User/Client Metadata
-*   --------------------
-*
-*       Get user metadata which includes info about:
-*           - Operating System (OS)
-*           - Browser (Chrome, Firefox, Edge, etc.)
-*           - TODO
-
-
-ADD functionality to add to recordedData that is not
-events or players
-This will be a function users can call to add their own data
-to recordedData so that we do not have to add it on our end
-**********************************************************/
-function getOSAndBrowser() {
-    /*
-        Just grab the string information
-        Have the users then parce it on their own
-
-        More like "here is the info, do what you want with it"
-    */
-    const userAgent = navigator.userAgent;
-    let operatingsystem = "Unknown OS";
-    let browserinfo = "Unknown Browser";
-  
-    // Detect OS
-    if (userAgent.indexOf("Win") !== -1) os = "Windows";
-    else if (userAgent.indexOf("Mac") !== -1) os = "MacOS";
-    else if (userAgent.indexOf("X11") !== -1) os = "UNIX";
-    else if (userAgent.indexOf("Linux") !== -1) os = "Linux";
-    else if (userAgent.indexOf("Android") !== -1) os = "Android";
-    else if (userAgent.indexOf("iOS") !== -1) os = "iOS";
-  
-    // Detect Browser
-    if (userAgent.indexOf("Chrome") !== -1) browser = "Chrome";
-    else if (userAgent.indexOf("Safari") !== -1) browser = "Safari";
-    else if (userAgent.indexOf("Firefox") !== -1) browser = "Firefox";
-    else if (userAgent.indexOf("MSIE") !== -1 || userAgent.indexOf("Trident") !== -1) browser = "Internet Explorer";
-    else if (userAgent.indexOf("Edge") !== -1) browser = "Edge";
-    else if (userAgent.indexOf("Opera") !== -1) browser = "Opera";
-  
-    return {
-        os: operatingsystem,
-        browser: browserinfo
-    };
-};
 
 //------------------------------------------------------
 // Define some new functions we can use in other code
@@ -331,7 +284,7 @@ function initSessionInfo() {
         sessionErrorCode: 0,
         sessionErrorMsg: '',
         sessionInitiated: false,
-        sessionStarted: false,
+        sessionStarted: false
     };    
 }
 
@@ -609,29 +562,30 @@ export async function readState(path) {
 // This function allows for direct changes to a gamestate without checking for conflicts
 // Use these updates to speed up games with continuous movements where players' movements do
 // not conflict with each other
-export function updateStateDirect(path, newState, optionalParamSkipRecord = false ) {
+export function updateStateDirect(path, newState, optionalDescription = '' ) {
     let refNow = ref(db, `${studyId}/states/${si.sessionId}/${path}`);
     if (newState == null) {
         // If the proposed state is null, use that to remove the node (so we can clean up the gamestate for players who leave the game)
-        remove(refNow).then( () => { recordEventData( path, newState, optionalParamSkipRecord )});
+        remove(refNow).then( () => { recordEventData( path, newState, optionalDescription )});
     } else {
         // Note that with the firebase update function, it only changes the fields indicated in newState and leaves all other fields intact
         if (typeof newState === 'object') {
-            update(refNow, newState).then( () => { recordEventData( path, newState, optionalParamSkipRecord )});;
+            update(refNow, newState).then( () => { recordEventData( path, newState, optionalDescription )});;
         } else {
-            set(refNow, newState).then( () => { recordEventData( path, newState, optionalParamSkipRecord )});;
+            set(refNow, newState).then( () => { recordEventData( path, newState, optionalDescription )});;
         }
     }
 }
 
-function recordEventData(path, state, skipRecord ) {
+function recordEventData(path, state, optionalDescription ) {
     // Are we recording the data?
-    if ((sessionConfig.recordData) && (!skipRecord)) {
+    if (sessionConfig.recordData) {
         let returnResult = {
             s: state,
             t: serverTimestamp(),
             pId: si.playerId,
             p: path,
+            d: optionalDescription
         };
         
         let newDataRef = push(recordEventsRef);
@@ -906,10 +860,6 @@ function joinPlayerSession(  allSessions , thisPlayer ) {
                 allSessions[proposedSessionId].numPlayersEverJoined = count;
 
                 // Create player status
-                // Player Data when joining a session that has already been created
-                //  TODO:
-                //      Add OS and Browswer info
-                //      Add any additional metadata about the user (connectivity, etc)
                 let playerData1 = {
                     waitingRoomStartedAt: serverTimestamp(), 
                     timeElapsedToWaitingRoom: new Date() - startTime,
@@ -919,9 +869,7 @@ function joinPlayerSession(  allSessions , thisPlayer ) {
                     arrivalIndex: count,
                     leftGameAt: 0,
                     finishStatus: 'na',
-                    urlparams: getUrlParameters(),
-                    consented: true,
-                    consentTime: serverTimestamp(),
+                    urlparams: getUrlParameters()
                 };
                 allSessions[proposedSessionId].players[thisPlayer] = playerData1;
                 allSessions[proposedSessionId].allPlayersEver[thisPlayer] = playerData1;
@@ -972,10 +920,6 @@ function joinPlayerSession(  allSessions , thisPlayer ) {
             
             let timeElapsedToWaitingRoom = new Date() - startTime;
 
-            // Player Data when creating a new waiting room (i.e. a new session)
-            //  TODO:
-            //      Add OS and Browswer info
-            //      Add any additional metadata about the user (connectivity, etc)
             let playerData1 = {
                 waitingRoomStartedAt: serverTimestamp(),
                 timeElapsedToWaitingRoom, 
@@ -985,9 +929,7 @@ function joinPlayerSession(  allSessions , thisPlayer ) {
                 arrivalIndex: 1,
                 leftGameAt: 0,
                 finishStatus: 'na',
-                urlparams: getUrlParameters(),
-                consented: true,
-                consentTime: serverTimestamp(),
+                urlparams: getUrlParameters()
             };
             let playerData2 = { [thisPlayer]: playerData1 };
             let saveData = {
