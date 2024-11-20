@@ -43,6 +43,60 @@ const firebaseApp = initializeApp(firebasempConfig);
 const auth = getAuth(firebaseApp);
 const db = getDatabase(firebaseApp);
 
+/**********************************************************
+*   User/Client Metadata
+*   --------------------
+*
+*       Get user metadata which includes info about:
+*           - Operating System (OS)
+*           - Browser (Chrome, Firefox, Edge, etc.)
+*           - TODO
+
+
+ADD functionality to add to recordedData that is not
+events or players
+This will be a function users can call to add their own data
+to recordedData so that we do not have to add it on our end
+
+*** Min players == Max players will drop everybody
+        So people in an experiment, if someone drops out,
+        then everybody drops
+**********************************************************/
+function getOSAndBrowser() {
+    /*
+        Just grab the string information
+        Have the users then parce it on their own
+
+        More like "here is the info, do what you want with it"
+    */
+    const userAgent = navigator.userAgent;
+    /*let operatingsystem = "Unknown OS";
+    let browserinfo = "Unknown Browser";
+  
+    // Detect OS
+    if (userAgent.indexOf("Win") !== -1) os = "Windows";
+    else if (userAgent.indexOf("Mac") !== -1) os = "MacOS";
+    else if (userAgent.indexOf("X11") !== -1) os = "UNIX";
+    else if (userAgent.indexOf("Linux") !== -1) os = "Linux";
+    else if (userAgent.indexOf("Android") !== -1) os = "Android";
+    else if (userAgent.indexOf("iOS") !== -1) os = "iOS";
+  
+    // Detect Browser
+    if (userAgent.indexOf("Chrome") !== -1) browser = "Chrome";
+    else if (userAgent.indexOf("Safari") !== -1) browser = "Safari";
+    else if (userAgent.indexOf("Firefox") !== -1) browser = "Firefox";
+    else if (userAgent.indexOf("MSIE") !== -1 || userAgent.indexOf("Trident") !== -1) browser = "Internet Explorer";
+    else if (userAgent.indexOf("Edge") !== -1) browser = "Edge";
+    else if (userAgent.indexOf("Opera") !== -1) browser = "Opera";
+
+    return {
+        os: operatingsystem,
+        browser: browserinfo
+    };
+    */
+   return userAgent;
+};
+
 
 //------------------------------------------------------
 // Define some new functions we can use in other code
@@ -869,7 +923,10 @@ function joinPlayerSession(  allSessions , thisPlayer ) {
                     arrivalIndex: count,
                     leftGameAt: 0,
                     finishStatus: 'na',
-                    urlparams: getUrlParameters()
+                    urlparams: getUrlParameters(),
+                    consented: true,
+                    consentTime: serverTimestamp(),
+                    metadata: getOSAndBrowser(),
                 };
                 allSessions[proposedSessionId].players[thisPlayer] = playerData1;
                 allSessions[proposedSessionId].allPlayersEver[thisPlayer] = playerData1;
@@ -929,7 +986,10 @@ function joinPlayerSession(  allSessions , thisPlayer ) {
                 arrivalIndex: 1,
                 leftGameAt: 0,
                 finishStatus: 'na',
-                urlparams: getUrlParameters()
+                urlparams: getUrlParameters(),
+                consented: true,
+                consentTime: serverTimestamp(),
+                metadata: getOSAndBrowser(),
             };
             let playerData2 = { [thisPlayer]: playerData1 };
             let saveData = {
