@@ -99,6 +99,10 @@
             }
         }
 
+        #trialCounter {
+            font-size: 1.75em;
+        }
+
         .textturn {
             font-size: 1.5em;
             animation: pulsate 1.5s infinite;
@@ -465,19 +469,25 @@
         </div>
     </div>
     
-    <div class="container" id="instructionsScreen" style="display: none;">
+    <div class="container" id="instructionsScreen" style="display: none">
         <h1>Instructions</h1>
         <div class="containertext" id="instructionText">
             
         </div>
         <a href="#" class="button" id="joinBtn">Proceed</a> 
     </div>
-    <div class="container" id="waitingRoomScreen" style="display:none">
+    <div class="container" id="waitingRoomScreen" style="display:none; height: 60%">
         <h1>Waiting Room</h1>  
-        <div class="containertext" id="messageWaitingRoom"></div>
+        <div class="containertext" id="messageWaitingRoom" style="text-align: center; font-size: 1.25em;"></div>
+        <div id="progressbar" role="progressbar" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" style="--value: 33; top: 15%; right: -37%"></div>
+        <!--<div class="lds-ring"><div></div><div></div><div></div><div></div></div>-->
     </div>
     <div class="container" id="gameScreen" style="caret-color: transparent; display:none;">
         <h1>Guess the number of objects <span id="numPlayers"></span></h1>
+        <div id="trialCounter">
+            Trial <span id="currentTrial"></span> of <span id="totalTrials"></span>
+        </div>
+        <br />
         <div class="textturn" id="turnMessage">
             You are Player
             <span id="playerID"></span>:
@@ -707,11 +717,12 @@
             </div>-->
         </div>
         <div class="containertext" id="messageGame"></div>
-        <a href="#" class="button" id="leaveBtn">End Session</a> 
+        <!--<a href="#" class="button" id="leaveBtn">End Session</a> -->
     </div>
-    <div class="container" id="finishScreen" style="display:none">
+    <div class="container" id="finishScreen" style="display: none; height: 60%">
         <h1>Completion</h1>  
         <div class="containertext" id="messageFinish"></div>
+        <a href="#" class="button" id="finishBtn" target="_blank">Finish</a> 
     </div>
     
     

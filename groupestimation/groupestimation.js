@@ -151,7 +151,7 @@ let numberOfEstimates = 0;
 let playerNEstimate = -1; // save a players no guess as -1, once a player has submitted a guess (> 0) then do something about it
 let selectedImageArray;
 let trialNumber = 1;
-let NumberOfImages = 5;
+let NumberOfImages = 10;
 let imgPath = '/mplib-live-demos/groupestimation/images/';
 let estimationTimeStart;
 let estimationTimeEnd;
@@ -214,18 +214,25 @@ let joinButton = document.getElementById('joinBtn');
 //      Waiting Room
 let waitingRoomScreen = document.getElementById('waitingRoomScreen');
 let messageWaitingRoom = document.getElementById('messageWaitingRoom');
+let progressBar = document.getElementById('progressbar');
 
 //      Game Interface
 let gameScreen = document.getElementById('gameScreen');
 let messageGame = document.getElementById('messageGame');
 let submitGuess; // = document.getElementById('estimation-button');
 let playerID = document.getElementById('playerID');
+let currentTrial = document.getElementById('currentTrial');
+let totalTrials = document.getElementById('totalTrials');
 let messageToPlayer = document.getElementById('messageToPlayer');
 let imageContainer = document.getElementById('image-to-estimate');
-let leaveButton = document.getElementById('leaveBtn');
+//let leaveButton = document.getElementById('leaveBtn');
+
+totalTrials.innerText = NumberOfImages;
 
 //      Complete Screen
+let finishScreen = document.getElementById('finishScreen');
 let messageFinish = document.getElementById('messageFinish');
+let finishButton = document.getElementById('finishBtn');
 
 
 //let turnText = document.getElementById('turnMessage');
@@ -241,6 +248,7 @@ instructionsText.innerHTML = `
     <div style="text-align: center">
         <img style="width: 50%; border: 3px solid; border-radius: 15px;" src="/mplib-live-demos/groupestimation/instructions/instruction-img.png" />
     </div>
+    <br />
     <p>
         You are the avatar in black. You can make your estimate in the blank box. Once your estimate is final, click on the "Submit" button. As soon as a another player makes an estimate, it will be visible to you. In this example, Player 2 has made an estimate of 260.
     </p>
@@ -292,14 +300,14 @@ joinButton.addEventListener('click', function () {
 });
 
 //      Leave Button (End Session Button)
-leaveButton.addEventListener('click', function () {
+/*leaveButton.addEventListener('click', function () {
     /*
     Call the library function to leave a session.
     
     This then triggers the local function endSession.
-    */
+    * /
     leaveSession();
-});
+});*/
 
 /*
     Game Logic and UI
@@ -565,9 +573,11 @@ function _createThisPlayerAvatar() {
         updateStateDirect(
             `players/${thisPlayerID}`,
             {
+                trial: Number(trialNumber),
                 estimate: Number(playerNEstimate),
                 timeForEstimate: estimationTimeEnd - estimationTimeStart
-            }
+            },
+            `Trial ${trialNumber}: Estimate made by player "${thisPlayerID}"`
         );
     } else {
         console.log("still listening...");
@@ -802,6 +812,7 @@ function loadNextTrial() {
     */
     resetTrialParams();
     console.log("Loading a new trial");
+    currentTrial.innerText = trialNumber;
     messageToPlayer.innerText = 'make your guess';
     // Set the Image
     imageContainer.src = gameState.images.trialImages['trialImage0' + trialNumber].path;
@@ -939,6 +950,14 @@ function joinWaitingRoom() {
     // switch screens from instruction to waiting room
     instructionsScreen.style.display = 'none';
     waitingRoomScreen.style.display = 'block';
+
+    if (numPlayers == 2) {
+        progressBar.style.cssText = "--value: 67; top: 15%; right: -37%";
+    } else if (numPlayers == 3) {
+        progressBar.style.cssText = "--value: 100; top: 15%; right: -37%";
+    } else {
+        progressBar.style.cssText = "--value: 33; top: 15%; right: -37%";
+    }
 }
 
 function updateWaitingRoom() {
@@ -955,16 +974,27 @@ function updateWaitingRoom() {
     instructionsScreen.style.display = 'none';
     waitingRoomScreen.style.display = 'block';
 
+    let numPlayers = getNumberCurrentPlayers(); // the current number of players
+    if (numPlayers == 2) {
+        progressBar.style.cssText = "--value: 67; top: 15%; right: -37%";
+    } else if (numPlayers == 3) {
+        progressBar.style.cssText = "--value: 100; top: 15%; right: -37%";
+    } else {
+        progressBar.style.cssText = "--value: 33; top: 15%; right: -37%";
+    }
+
     // Waiting Room is full and we can start game
     let [ doCountDown , secondsLeft ] = getWaitRoomInfo();
     if (doCountDown) {
         let str2 = `Game will start in ${ secondsLeft } seconds...`;
-        messageWaitingRoom.innerText = str2;
+        messageWaitingRoom.innerText = str2;        
     } else { // Still waiting for more players, update wait count
-        let numPlayers = getNumberCurrentPlayers(); // the current number of players
         let numNeeded = sessionConfig.minPlayersNeeded - numPlayers; // Number of players still needed (in case the player is currently in a waiting room)
         
-        let str2 = `Waiting for ${ numNeeded } additional ${ numPlayers > 1 ? 'players' : 'player' }...`;
+        let str2 = `
+            The experiment will start as soon as all required players have arrived.
+            Waiting for ${ numNeeded } additional ${ numPlayers > 1 ? 'players' : 'player' }...
+        `;
         messageWaitingRoom.innerText = str2;
     }
 }
@@ -995,6 +1025,7 @@ function startSession() {
     let str = `Started game with session id ${getSessionId()} with ${getNumberCurrentPlayers()} players at ${dateString}.`;
     myconsolelog( str );
 
+    currentTrial.innerText = trialNumber;
     playerID.innerText = 1;
     //let str2 = `<p>The game has started...</p><p>Number of players: ${ sessionInfo.numPlayers}</p><p>Session ID: ${ sessionInfo.sessionId}$</p>`;
     //messageGame.innerHTML = str2;
@@ -1053,19 +1084,50 @@ function endSession() {
 
     if ( anyPlayerTerminatedAbnormally()) {
         // Another player closed their window or were disconnected prematurely
-        messageFinish.innerHTML = `<p>Session ended abnormally because the other player closed their window or was disconnected</p>`;
-        
+        /*  Pay participant */
+        //  Give a unique prolific code for this
+        messageFinish.innerHTML = `
+            <p>Session ended abnormally because the other player closed their window or was disconnected</p>
+            <br />
+            <p>You will still be compensated for your time. Click on the "Finish" button to return to Prolific.</p>
+        `;
+        finishButton.href = "https://app.prolific.com/submissions/complete?cc=CJNKSFX1";
     } else if (err.errorCode == 1) {
         // No sessions available
-        messageFinish.innerHTML = `<p>Session ended abnormally because there are no available sessions to join</p>`;
+        /*  Don't pay participant   */
+        //  Don't add a Prolific code for this
+        messageFinish.innerHTML = `
+            <p>Session ended abnormally because there are no available sessions to join</p>
+            <br />
+            <p>You will not be compensated since there were no sessions to join.</p>
+        `;
+        finishButton.style.display = "none";
     } else if (err.errorCode==2) {
         // This client was disconnected (e.g. internet connectivity issues) 
-        messageFinish.innerHTML = `<p>Session ended abnormally because you are experiencing internet connectivity issues</p>`;
+        messageFinish.innerHTML = `
+            <p>Session ended abnormally because you are experiencing internet connectivity issues</p>
+            <br />
+            <p>You will not be compensated due to a connectivity issue.</p>
+        `;
+        finishButton.style.display = "none";
     } else if (err.errorCode==3) {
         // This client is using an incompatible browser
-        messageFinish.innerHTML = `<p>Session ended abnormally because you are using the Edge browser which is incompatible with this experiment. Please use Chrome or Firefox</p>`;
+        /*  Don't pay participant   */
+        // Don't add a Prolific code for this
+        messageFinish.innerHTML = `
+            <p>Session ended abnormally because you are using the Edge browser which is incompatible with this experiment. Please use Chrome or Firefox</p>
+            <br />
+            <p>You will not be compensated due to an incompatability issue.</p>
+        `;
+        finishButton.style.display = "none";
     } else {
-        messageFinish.innerHTML = `<p>You have completed the session.</p>`;
+        // Completed the study and should get a Prolific code
+        messageFinish.innerHTML = `
+            <p>You have completed the session.</p>
+            <br />
+            <p>You will be compensated for your time. Click on the "Finish" button to return to Prolific.</p>
+        `;
+        finishButton.href = "https://app.prolific.com/submissions/complete?cc=C18V2ZMB";
     }
 };
 
