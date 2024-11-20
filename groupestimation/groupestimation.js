@@ -151,7 +151,7 @@ let numberOfEstimates = 0;
 let playerNEstimate = -1; // save a players no guess as -1, once a player has submitted a guess (> 0) then do something about it
 let selectedImageArray;
 let trialNumber = 1;
-let NumberOfImages = 10;
+let NumberOfImages = 5;
 let imgPath = '/mplib-live-demos/groupestimation/images/';
 let estimationTimeStart;
 let estimationTimeEnd;
